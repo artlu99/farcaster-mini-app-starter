@@ -110,7 +110,7 @@ app.get("/slides", (c) => {
       fid: 6546,
       imgUrl: "https://picosub.artlu.xyz/og-square.jpg",
       caption: "picosub Apr 2025",
-      href: "https://picosub.artlu.xyz",
+      href: "https://warpcast.com/artlu/0x52b27041",
       altText: null,
       created_at: "2025-04-03 15:33:47.120182",
     },
