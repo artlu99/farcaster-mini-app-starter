@@ -94,8 +94,28 @@ app.get("/slides", (c) => {
       altText: null,
       created_at: "2025-01-22 15:33:47.120182",
     },
+    {
+      id: 28,
+      order: 999,
+      fid: 6546,
+      imgUrl: "https://sassyhash.artlu.xyz/sassyhash-og.png",
+      caption: "SassyHash 💅 Contest Mar 2025",
+      href: "https://warpcast.com/artlu/0xfabea1ca",
+      altText: null,
+      created_at: "2025-04-03 15:33:47.120182",
+    },
+    {
+      id: 29,
+      order: 998,
+      fid: 6546,
+      imgUrl: "https://picosub.artlu.xyz/og-square.jpg",
+      caption: "picosub Apr 2025",
+      href: "https://picosub.artlu.xyz",
+      altText: null,
+      created_at: "2025-04-03 15:33:47.120182",
+    },
   ];
-  return c.json(slides);
+  return c.json(slides.slice().sort((a, b) => a.order - b.order));
 });
 
 export default app;
