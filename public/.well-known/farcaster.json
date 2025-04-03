@@ -1,0 +1,17 @@
+{
+    "accountAssociation": {
+        "header": "eyJmaWQiOjY1NDYsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgyMWNBOUYwRjdDMGI1OWY2MTZiMUQ5NjMyNWQ1NUI2MmM5NjYxRDZkIn0",
+        "payload": "eyJkb21haW4iOiJwaW5uZWQtY2FzdC1taW5pLWFwcC5hcnRsdS53b3JrZXJzLmRldiJ9",
+        "signature": "MHhmOTk0MmVhMDI2NDM2NjA1NjUwYzdiNWFiOWI5ZjUyNmNiN2Q5ZGFlNDMxOTk0NmRiOWZlMTkyYjg5NGVhYjFiNTNlMmQ1ZmMzZDE5MzJmMDc0ZmRmNjA5ZDgzYjlhNDQ3ODdiZDM2NzQ0MGQ1MDhhMDIwZGEyNzc1ZjY1MTI3MDFi"
+      },
+    "frame": {
+        "name": "pinned-artlu-cast",
+        "version": "0.0.1",
+        "iconUrl": "https://ohpuc.artlu.xyz/icon.png",
+        "homeUrl": "https://pinned-cast-mini-app.artlu.workers.dev",
+        "imageUrl": "https://ohpuc.artlu.xyz/android-chrome-512x512.png",
+        "buttonTitle": "pin",
+        "splashImageUrl": "https://ohpuc.artlu.xyz/android-chrome-512x512.png",
+        "splashBackgroundColor": "#000000"
+    }
+  }
