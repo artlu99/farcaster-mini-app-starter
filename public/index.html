@@ -3,17 +3,254 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
+		<title>artlu :hat:</title>
+		<style>
+			:root {
+				--bg-color: #f8f8f8;
+				--text-color: #333;
+				--button-color: #666;
+				--button-hover-color: #333;
+				--button-disabled-color: #ccc;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--bg-color: #121212;
+					--text-color: #e0e0e0;
+					--button-color: #888;
+					--button-hover-color: #e0e0e0;
+					--button-disabled-color: #444;
+				}
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+				margin: 0;
+				padding: 0;
+				background: var(--bg-color);
+				height: 100vh;
+				display: flex;
+				flex-direction: column;
+				color: var(--text-color);
+				overflow: hidden;
+			}
+			.slideshow-container {
+				flex: 1;
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+			}
+			.header {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				background: var(--bg-color);
+				padding: 12px 0;
+				z-index: 10;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.slide-counter {
+				font-size: 0.9em;
+				opacity: 0.7;
+				text-align: center;
+				flex: 1;
+			}
+			.navigation {
+				display: flex;
+				justify-content: space-between;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				height: 64px; /* Match header height */
+				pointer-events: none;
+				z-index: 20;
+			}
+			.navigation button {
+				width: 80px;
+				height: 80px;
+				background: transparent;
+				border: none;
+				color: var(--button-color);
+				font-size: 3em;
+				display: flex;
+				align-items: flex-start;
+				justify-content: center;
+				opacity: 0;
+				transition: all 0.2s ease;
+				pointer-events: auto;
+				padding: 0;
+				margin: 0;
+				outline: none;
+				transform-origin: center;
+				position: absolute;
+			}
+			.navigation button.fade-in {
+				opacity: 0.3;
+				animation: fadeIn 4s ease-out;
+			}
+			@keyframes fadeIn {
+				from { opacity: 0; }
+				to { opacity: 0.3; }
+			}
+			.navigation button:first-child {
+				left: 8px;
+				top: 16px; /* Moved down for more overlap */
+			}
+			.navigation button:last-child {
+				right: 8px;
+				top: 16px; /* Moved down for more overlap */
+			}
+			.navigation button:active {
+				opacity: 0.7;
+				animation: bounce 0.4s cubic-bezier(0.36, 0, 0.66, -0.56);
+			}
+			@keyframes bounce {
+				0%, 100% { transform: scale(1); }
+				25% { transform: scale(0.5); }
+				50% { transform: scale(1.2); }
+				75% { transform: scale(0.8); }
+			}
+			@media (prefers-color-scheme: dark) {
+				.navigation button:active {
+					background: rgba(255,255,255,0.05);
+				}
+			}
+			.slide {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				padding-top: 50px;
+				transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-start;
+				align-items: center;
+			}
+			.slide img {
+				max-width: 100%;
+				max-height: calc(100vh - 100px);
+				object-fit: contain;
+			}
+			.slide-caption {
+				margin-top: 16px;
+				font-size: 1.1em;
+				color: var(--text-color);
+				text-align: center;
+				padding: 0 16px;
+			}
+		</style>
+		<script src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"></script>
 	</head>
 	<body>
-		<h1 id="heading"></h1>
+		<div class="slideshow-container">
+			<header class="header">
+				<div class="slide-counter" id="slideCounter"></div>
+			</header>
+			<div class="navigation">
+				<button id="prevBtn" title="Previous">👈</button>
+				<button id="nextBtn" title="Next">👉</button>
+			</div>
+			<div id="slideshow"></div>
+		</div>
+
 		<script>
-			fetch('/message')
-				.then((resp) => resp.text())
-				.then((text) => {
-					const h1 = document.getElementById('heading');
-					h1.textContent = text;
-				});
+			let slides = [];
+			let currentSlide = 0;
+			let touchStartX = 0;
+			let touchEndX = 0;
+			const SWIPE_THRESHOLD = 50; // Minimum distance for a swipe
+
+			async function fetchSlides() {
+				try {
+					const response = await fetch('/slides');
+					slides = await response.json();
+					renderSlides();
+					updateCounter();
+				} catch (error) {
+					console.error('Error fetching slides:', error);
+					document.getElementById('slideshow').innerHTML = '<p>Error loading slides</p>';
+				}
+			}
+
+			function renderSlides() {
+				const slideshow = document.getElementById('slideshow');
+				slideshow.innerHTML = slides.map((slide, index) => `
+					<div class="slide" style="transform: translateX(${(index - currentSlide) * 100}%)">
+						<img src="${slide.imgUrl}" alt="Slide ${index + 1}" 
+							onload="document.querySelectorAll('.navigation button').forEach(btn => btn.classList.add('fade-in'))"
+							onclick="openImageInNewTab('${slide.href}')"
+							style="cursor: pointer;">
+						<div class="slide-caption">${slide.caption}</div>
+					</div>
+				`).join('');
+			}
+
+			function updateCounter() {
+				const counter = document.getElementById('slideCounter');
+				counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+			}
+
+			function goToSlide(index) {
+				currentSlide = (index + slides.length) % slides.length;
+				renderSlides();
+				updateCounter();
+			}
+
+			document.getElementById('prevBtn').addEventListener('click', () => {
+				goToSlide(currentSlide - 1);
+			});
+
+			document.getElementById('nextBtn').addEventListener('click', () => {
+				goToSlide(currentSlide + 1);
+			});
+
+			// Touch event handling
+			const slideshow = document.getElementById('slideshow');
+			
+			slideshow.addEventListener('touchstart', (e) => {
+				touchStartX = e.changedTouches[0].screenX;
+			}, { passive: true });
+
+			slideshow.addEventListener('touchend', (e) => {
+				touchEndX = e.changedTouches[0].screenX;
+				handleSwipe();
+			}, { passive: true });
+
+			function handleSwipe() {
+				const diff = touchStartX - touchEndX;
+				if (Math.abs(diff) > SWIPE_THRESHOLD) {
+					const buttons = document.querySelectorAll('.navigation button');
+					if (diff > 0) {
+						// Swiped left
+						goToSlide(currentSlide + 1);
+						buttons[1].style.animation = 'none';
+						buttons[1].offsetHeight; // Trigger reflow
+						buttons[1].style.animation = 'bounce 0.4s cubic-bezier(0.36, 0, 0.66, -0.56)';
+					} else {
+						// Swiped right
+						goToSlide(currentSlide - 1);
+						buttons[0].style.animation = 'none';
+						buttons[0].offsetHeight; // Trigger reflow
+						buttons[0].style.animation = 'bounce 0.4s cubic-bezier(0.36, 0, 0.66, -0.56)';
+					}
+				}
+			}
+
+			function openImageInNewTab(url) {
+				frame.sdk.actions.openUrl(url);
+			}
+
+			// Initialize the slideshow
+			fetchSlides();
 		</script>
+		<script>
+			frame.sdk.actions.ready();
+		</script>		  
 	</body>
 </html>
