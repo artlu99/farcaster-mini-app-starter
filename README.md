@@ -8,11 +8,11 @@ Deployed on [Cloudflare](https://pinned-cast-mini-app.artlu.workers.dev) and vie
 
 ---
 
-```
+```sh
 pnpm install
 pnpm run dev
 ```
 
-```
+```sh
 pnpm run deploy
 ```

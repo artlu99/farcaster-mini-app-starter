@@ -6,7 +6,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "pinned-cast-mini-app",
 	"main": "src/index.ts",
-	"compatibility_date": "2025-04-03",
+	"compatibility_date": "2025-04-28",
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./public"
